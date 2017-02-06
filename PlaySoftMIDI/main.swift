@@ -56,15 +56,15 @@ enum Midi : UInt32 {
     case kMidiMessageProgramChange = 0xC0
 }
 
-func set_voice(outSynth: AudioUnit, _ instrument:Int){
-    print("instrument ", instruments[instrument]);
+func set_voice(_ outSynth: AudioUnit, _ instrument:Int){
+    print("instrument ", instruments[instrument])
     MusicDeviceMIDIEvent(outSynth, Midi.kMidiMessageProgramChange.rawValue,
-			 UInt32(instrument), 0, 0);
+			 UInt32(instrument), 0, 0)
 }
   
 
-func play_notes(outSynth: AudioUnit, _ time:Int){
-    let midiChannelInUse: UInt32 = 0; //we're using midi channel 1...
+func play_notes(_ outSynth: AudioUnit, _ time:Int){
+    let midiChannelInUse: UInt32 = 0 //we're using midi channel 1...
     for i: UInt32 in 0..<10 {
         let noteNum = i+60
         let onVelocity:UInt32 = 127
@@ -86,48 +86,48 @@ func main(){
     var result = NewAUGraph(&outGraph)
     
     
-    print("result1 =", result);
+    print("result1 =", result)
 
-    cd.componentManufacturer = kAudioUnitManufacturer_Apple;
-    cd.componentFlags = 0;
-    cd.componentFlagsMask = 0;
-    cd.componentType = kAudioUnitType_MusicDevice;
-    cd.componentSubType = kAudioUnitSubType_DLSSynth;
-    result = AUGraphAddNode(outGraph, &cd, &synthNode);
-    print("result2 = ", result);
+    cd.componentManufacturer = kAudioUnitManufacturer_Apple
+    cd.componentFlags = 0
+    cd.componentFlagsMask = 0
+    cd.componentType = kAudioUnitType_MusicDevice
+    cd.componentSubType = kAudioUnitSubType_DLSSynth
+    result = AUGraphAddNode(outGraph, &cd, &synthNode)
+    print("result2 = ", result)
 
-    cd.componentType = kAudioUnitType_Effect;
-    cd.componentSubType = kAudioUnitSubType_PeakLimiter;  
+    cd.componentType = kAudioUnitType_Effect
+    cd.componentSubType = kAudioUnitSubType_PeakLimiter  
     
-    result = AUGraphAddNode(outGraph, &cd, &limiterNode);
-    print("result3 = ", result);
+    result = AUGraphAddNode(outGraph, &cd, &limiterNode)
+    print("result3 = ", result)
     
-    cd.componentType = kAudioUnitType_Output;
-    cd.componentSubType = kAudioUnitSubType_DefaultOutput;  
-    result = AUGraphAddNode (outGraph, &cd, &outNode);
-    print("result4 = ", result);
+    cd.componentType = kAudioUnitType_Output
+    cd.componentSubType = kAudioUnitSubType_DefaultOutput  
+    result = AUGraphAddNode (outGraph, &cd, &outNode)
+    print("result4 = ", result)
 
-    result = AUGraphOpen (outGraph);
-    print("result5 = ", result);
+    result = AUGraphOpen (outGraph)
+    print("result5 = ", result)
 
-    result = AUGraphConnectNodeInput (outGraph, synthNode, 0, limiterNode, 0);
-    print("result6 = ", result);
+    result = AUGraphConnectNodeInput (outGraph, synthNode, 0, limiterNode, 0)
+    print("result6 = ", result)
 
-    result = AUGraphConnectNodeInput (outGraph, limiterNode, 0, outNode, 0);
-    print("result7 = ", result);
+    result = AUGraphConnectNodeInput (outGraph, limiterNode, 0, outNode, 0)
+    print("result7 = ", result)
 	
     // ok we're good to go - get the Synth Unit...
     
-    result = AUGraphNodeInfo(outGraph, synthNode, nil, &outSynth);
-    print("result8 = ", result);
+    result = AUGraphNodeInfo(outGraph, synthNode, nil, &outSynth)
+    print("result8 = ", result)
   
-    result = AUGraphInitialize (outGraph);
-    print("result9 = ", result);
+    result = AUGraphInitialize (outGraph)
+    print("result9 = ", result)
     
-    // CAShow (outGraph); // prints out the graph so we can see what it looks like...
+    // CAShow (outGraph) // prints out the graph so we can see what it looks like...
     	
-    result = AUGraphStart (outGraph);
-    print("result12 = ", result);
+    result = AUGraphStart (outGraph)
+    print("result12 = ", result)
 
     set_voice(outSynth, 2) // piano
     play_notes(outSynth, 250)
